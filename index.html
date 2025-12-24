@@ -135,7 +135,7 @@
             document.getElementById('kpi-bal').innerText = "$"+total.toLocaleString(); document.getElementById('kpi-inc').innerText = "$"+inc.toLocaleString(); document.getElementById('kpi-exp').innerText = "$"+exp.toLocaleString();
             let pending = 0; this.data.fix.filter(f => f.scope === this.scope).forEach(f => { if(!curMonth.some(t => t.cat === f.name)) pending += parseFloat(f.cost); });
             document.getElementById('kpi-proj').innerText = "$"+(exp+pending).toLocaleString();
-            const max = Math.max(inc, exp, 100); document.getElementById('bar-inc').style.height = (inc/max*120)+'px';
+            const max = Math.max(inc, exp, 100);document.getElementById('bar-inc').style.height = (inc/max*120)+'px;
 document.getElementById('bar-exp').style.height = (exp/max*120)+'px';;
             this.renderTx(list); this.renderCal(); this.renderGoals();
         },
