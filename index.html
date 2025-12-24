@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -52,7 +51,7 @@
         <div class="nav-item" onclick="nav('transactions')">📝 Movimientos</div>
         <div class="nav-item" onclick="nav('autopilot')">📅 Calendario</div>
         <div class="nav-item" onclick="nav('goals')">🎯 Metas</div>
-        <div style="padding: 20px; font-size: 12px; color: #666; text-align: center; margin-top: auto;">ScalaSpA v2.0 Mobile</div>
+        <div style="padding: 20px; font-size: 12px; color: #666; text-align: center; margin-top: auto;">ScalaSpA v2.1 Mobile</div>
     </div>
     <div class="topbar">
         <div style="display: flex; align-items: center; gap: 15px;">
@@ -79,8 +78,8 @@
             <div class="card">
                 <h3 style="margin-top:0; font-size:16px;">Flujo de Caja</h3>
                 <div style="display:flex; height:150px; align-items:flex-end; gap:20px; padding-bottom:10px;">
-                    <div style="flex:1; text-align:center;"><div id="bar-inc" style="background:var(--success); height:1%; border-radius:4px 4px 0 0; transition:0.5s"></div><small>Ing</small></div>
-                    <div style="flex:1; text-align:center;"><div id="bar-exp" style="background:var(--danger); height:1%; border-radius:4px 4px 0 0; transition:0.5s"></div><small>Gas</small></div>
+                    <div style="flex:1; text-align:center;"><div id="bar-inc" style="background:var(--success); height:1px; min-height:1px; border-radius:4px 4px 0 0; transition:0.5s"></div><small>Ing</small></div>
+                    <div style="flex:1; text-align:center;"><div id="bar-exp" style="background:var(--danger); height:1px; min-height:1px; border-radius:4px 4px 0 0; transition:0.5s"></div><small>Gas</small></div>
                 </div>
             </div>
             <button class="btn btn-gold" onclick="APP.exportExcelFixed()">💾 Descargar Excel</button>
@@ -121,11 +120,13 @@
     window.APP = {
         data: { tx: [], fix: [], goals: [] }, cats: JSON.parse(JSON.stringify(DEFAULT_CATS)), scope: 'Personal', calDate: new Date(),
         init: function() {
-            if(localStorage.getItem('scala_uc_tx')) this.data.tx = JSON.parse(localStorage.getItem('scala_uc_tx'));
-            if(localStorage.getItem('scala_uc_fix')) this.data.fix = JSON.parse(localStorage.getItem('scala_uc_fix'));
-            if(localStorage.getItem('scala_uc_goals')) this.data.goals = JSON.parse(localStorage.getItem('scala_uc_goals'));
-            if(localStorage.getItem('scala_uc_cats')) this.cats = JSON.parse(localStorage.getItem('scala_uc_cats'));
-            document.getElementById('inp-date').valueAsDate = new Date(); this.refresh();
+            try {
+                if(localStorage.getItem('scala_uc_tx')) this.data.tx = JSON.parse(localStorage.getItem('scala_uc_tx'));
+                if(localStorage.getItem('scala_uc_fix')) this.data.fix = JSON.parse(localStorage.getItem('scala_uc_fix'));
+                if(localStorage.getItem('scala_uc_goals')) this.data.goals = JSON.parse(localStorage.getItem('scala_uc_goals'));
+                if(localStorage.getItem('scala_uc_cats')) this.cats = JSON.parse(localStorage.getItem('scala_uc_cats'));
+                document.getElementById('inp-date').valueAsDate = new Date(); this.refresh();
+            } catch(e) { console.log("Error cargando datos", e); }
         },
         save: function() { localStorage.setItem('scala_uc_tx', JSON.stringify(this.data.tx)); localStorage.setItem('scala_uc_fix', JSON.stringify(this.data.fix)); localStorage.setItem('scala_uc_goals', JSON.stringify(this.data.goals)); localStorage.setItem('scala_uc_cats', JSON.stringify(this.cats)); },
         refresh: function() {
@@ -135,8 +136,12 @@
             document.getElementById('kpi-bal').innerText = "$"+total.toLocaleString(); document.getElementById('kpi-inc').innerText = "$"+inc.toLocaleString(); document.getElementById('kpi-exp').innerText = "$"+exp.toLocaleString();
             let pending = 0; this.data.fix.filter(f => f.scope === this.scope).forEach(f => { if(!curMonth.some(t => t.cat === f.name)) pending += parseFloat(f.cost); });
             document.getElementById('kpi-proj').innerText = "$"+(exp+pending).toLocaleString();
-            const max = Math.max(inc, exp, 100);document.getElementById('bar-inc').style.height = (inc/max*120)+'px;
-document.getElementById('bar-exp').style.height = (exp/max*120)+'px';;
+            
+            // CORRECCION GRAFICOS
+            const max = Math.max(inc, exp, 1); 
+            document.getElementById('bar-inc').style.height = (inc/max*120)+'px'; 
+            document.getElementById('bar-exp').style.height = (exp/max*120)+'px';
+            
             this.renderTx(list); this.renderCal(); this.renderGoals();
         },
         renderTx: function(list) {
@@ -168,7 +173,7 @@ document.getElementById('bar-exp').style.height = (exp/max*120)+'px';;
         addGoal: function() { const n = prompt("Meta:"); const t = prompt("Monto:"); if(n&&t) { this.data.goals.push({id:Date.now(), name:n, target:t, curr:0}); this.save(); this.refresh(); } },
         delGoal: function(id) { if(confirm("¿Borrar Meta?")) { this.data.goals = this.data.goals.filter(x=>x.id!==id); this.save(); this.refresh(); }},
         fundGoal: function(id) { const m = prompt("Monto a agregar:"); if(m) { this.data.goals.find(x=>x.id===id).curr += parseFloat(m); this.save(); this.refresh(); } },
-        exportExcelFixed: function() { let csvContent = "data:text/csv;charset=utf-8,Fecha,Ambito,Tipo,Categoria,Monto,Nota\n"; this.data.tx.forEach(t => { csvContent += `${t.date},${t.scope},${t.type},${t.cat},${t.amt},${t.note}\n`; }); const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "savia_data.csv"); document.body.appendChild(link); link.click(); }
+        exportExcelFixed: function() { let csvContent = "data:text/csv;charset=utf-8,Fecha,Ambito,Tipo,Categoria,Monto,Nota\\n"; this.data.tx.forEach(t => { csvContent += `${t.date},${t.scope},${t.type},${t.cat},${t.amt},${t.note}\\n`; }); const encodedUri = encodeURI(csvContent); const link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", "savia_data.csv"); document.body.appendChild(link); link.click(); }
     };
     window.onload = function() { APP.init(); };
 </script>
