@@ -7,9 +7,9 @@
     <meta name="theme-color" content="#0a192f">
    <link rel="icon" type="image/jpeg" href="icon.jpeg">
 <link rel="apple-touch-icon" href="icon.jpeg">
-    <title>SavIA by ScalaSpA</title>
+    <title>Savia Final</title>
     <style>
-        :root { --navy: #0a192f; --gold: #c5a059; --bg: #f4f7f6; --white: #fff; --text: #2c3e50; --danger: #e74c3c; --success: #27ae60; --warning: #f39c12; }
+        :root { --navy: #0a192f; --gold: #c5a059; --bg: #f4f7f6; --white: #fff; --text: #2c3e50; --danger: #c0392b; --success: #27ae60; --warning: #f39c12; }
         body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
@@ -17,7 +17,9 @@
         .topbar { background: var(--white); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 20; height: 60px; }
         .menu-btn { font-size: 24px; color: var(--navy); cursor: pointer; }
         .app-title { font-weight: 900; color: var(--navy); font-size: 20px; letter-spacing: -0.5px; }
-        .add-btn { background: var(--navy); color: var(--gold); border: none; width: 38px; height: 38px; border-radius: 50%; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 10px rgba(10, 25, 47, 0.3); }
+        
+        /* BOTÓN NUEVO CON TEXTO */
+        .add-btn { background: var(--navy); color: var(--gold); border: none; padding: 0 20px; height: 40px; border-radius: 20px; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(10, 25, 47, 0.3); }
 
         .sidebar { position: fixed; top: 0; left: 0; height: 100%; width: 280px; background: var(--navy); transform: translateX(-100%); transition: 0.3s; z-index: 100; padding: 20px; display:flex; flex-direction:column; box-shadow: 4px 0 20px rgba(0,0,0,0.2); }
         .sidebar.active { transform: translateX(0); }
@@ -36,23 +38,27 @@
         .acc-name { font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
         .acc-bal { font-size: 16px; font-weight: bold; margin-top: 5px; color: var(--gold); }
         
-        /* BUDGET BARS */
+        /* GRAFICOS (Dashboard) */
+        .chart-box { margin-top:10px; }
+        .bar-container { display:flex; height:120px; align-items:flex-end; gap:20px; padding-bottom:10px; border-bottom:1px solid #eee; }
+        .bar-col { flex:1; text-align:center; }
+        .bar { width: 100%; border-radius: 6px 6px 0 0; transition: 0.5s; min-height: 2px; }
+        .donut-container { display:flex; align-items:center; gap:15px; justify-content:center; margin-top:15px; }
+        .donut { width:100px; height:100px; border-radius:50%; flex-shrink:0; border:10px solid #f8f9fa; }
+
+        /* PRESUPUESTOS */
         .prog-container { background: #eee; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px; }
         .prog-bar { height: 100%; background: var(--success); transition: 0.5s; }
         .prog-bar.warn { background: var(--warning); }
         .prog-bar.danger { background: var(--danger); }
         .budget-row { margin-bottom: 15px; }
-        .budget-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 2px; }
 
-        /* CALENDAR GRID (RECUPERADO) */
+        /* CALENDAR */
         .cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
         .cal-day { height: 45px; border: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; position: relative; background: #fff; font-weight: bold; color: #555; }
         .cal-day.has-event { background: #e3f2fd; color: var(--navy); border-color: #bbdefb; }
         .cal-day.paid { background: #d4edda; color: #155724; border-color: #c3e6cb; }
-
-        /* INSIGHTS */
-        .insight-tag { display: inline-block; padding: 4px 8px; background: #e8f6f3; color: #16a085; border-radius: 6px; font-size: 11px; font-weight: bold; margin-right: 5px; }
 
         /* FORMS & MODAL */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
@@ -60,11 +66,9 @@
         .form-group { margin-bottom: 15px; }
         .form-label { font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; display: block; }
         .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; background: #f9f9f9; transition: 0.2s; }
-        .form-control:focus { border-color: var(--navy); background: #fff; }
         .btn { padding: 14px; border-radius: 10px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary { background: var(--navy); color: white; }
         .btn-gold { background: var(--gold); color: var(--navy); }
-        .btn-outline { background: transparent; border: 1px solid #ccc; color: #555; }
         
         /* TABLE & LISTS */
         .tx-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
@@ -72,6 +76,9 @@
         .tx-cat-icon { width: 35px; height: 35px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .tx-amount { font-weight: bold; font-size: 15px; }
         .tag-badge { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #666; margin-left: 5px; }
+        .icon-btn { cursor:pointer; font-size:18px; padding:5px; }
+        .icon-del { color: #e74c3c; }
+        .icon-edit { color: var(--navy); }
     </style>
 </head>
 <body>
@@ -80,15 +87,15 @@
     
     <nav class="sidebar" id="sidebar">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-            <div class="app-title" style="color:var(--gold)">SavIA by ScalaSpA</div>
+            <div class="app-title" style="color:var(--gold)">Savia v7.0</div>
             <div onclick="UI.toggleMenu()" style="color:white; font-size:20px; cursor:pointer">✕</div>
         </div>
         <div class="nav-item active" onclick="UI.nav('dashboard')">📊 Dashboard</div>
         <div class="nav-item" onclick="UI.nav('budgets')">⚖️ Presupuestos</div>
-        <div class="nav-item" onclick="UI.nav('accounts')">💳 Agregar Cuentas</div>
-        <div class="nav-item" onclick="UI.nav('transactions')">📝 Agregar Movimientos</div>
-        <div class="nav-item" onclick="UI.nav('autopilot')">📅 Calendario de Pagos</div>
-        <div class="nav-item" onclick="UI.nav('tools')">🛠️ Descargar respaldo</div>
+        <div class="nav-item" onclick="UI.nav('accounts')">💳 Cuentas</div>
+        <div class="nav-item" onclick="UI.nav('transactions')">📝 Movimientos</div>
+        <div class="nav-item" onclick="UI.nav('autopilot')">📅 Calendario</div>
+        <div class="nav-item" onclick="UI.nav('tools')">🛠️ Herramientas</div>
     </nav>
 
     <header class="topbar">
@@ -96,7 +103,7 @@
             <div class="menu-btn" onclick="UI.toggleMenu()">☰</div>
             <div class="app-title">Savia</div>
         </div>
-        <button class="add-btn" onclick="UI.openModal()">+</button>
+        <button class="add-btn" onclick="UI.openModal()">+ Ingresar Movimiento</button>
     </header>
 
     <main class="main" id="main-container">
@@ -160,7 +167,7 @@
     </div>
 
 <script>
-    /** SAVIA ENGINE V6.0 - COMPLETA **/
+    /** SAVIA ENGINE V7.0 - GRAFICOS Y BORRADO **/
     const UTILS = {
         fmt: (n) => "$" + parseInt(n).toLocaleString('es-CL'),
         id: () => Date.now().toString(36) + Math.random().toString(36).substr(2),
@@ -185,10 +192,8 @@
         save: function() { localStorage.setItem('savia_db_v5', JSON.stringify(this.data)); },
         migrateFromV4: function() {
             const oldTx = JSON.parse(localStorage.getItem('scala_uc_tx') || '[]');
-            const oldFix = JSON.parse(localStorage.getItem('scala_uc_fix') || '[]');
             this.data.acc = [{id:'def', name:'Cuenta Principal', type:'Efectivo', bal:0}];
             this.data.tx = oldTx.map(t => ({...t, accId: 'def', tags: []}));
-            this.data.fix = oldFix;
             this.save();
         }
     };
@@ -237,8 +242,19 @@
                     DB.save(); 
                 }
                 UI.renderCatOpts(); 
-                // Si estamos en presupuestos, refrescar esa vista también
                 if(UI.currView === 'budgets') UI.renderBudgets(document.getElementById('main-container'));
+            }
+        },
+
+        delCat: function(catName) {
+            if(confirm(`¿Eliminar la categoría "${catName}"?\nSe borrará del listado de presupuestos.`)) {
+                // Borrar de la lista de categorias
+                DB.data.cats.Personal.Gasto = DB.data.cats.Personal.Gasto.filter(c => c !== catName);
+                // Borrar presupuesto asociado
+                if(DB.data.budgets[catName]) delete DB.data.budgets[catName];
+                
+                DB.save();
+                UI.renderBudgets(document.getElementById('main-container'));
             }
         },
 
@@ -276,7 +292,13 @@
             UI.refreshCurrent();
         },
         
-        delTx: (id) => { if(confirm("¿Borrar?")) { DB.data.tx = DB.data.tx.filter(t=>t.id!==id); DB.save(); UI.refreshCurrent(); } },
+        delTx: (id) => { 
+            if(confirm("¿Estás seguro de borrar este movimiento?")) { 
+                DB.data.tx = DB.data.tx.filter(t=>t.id!==id); 
+                DB.save(); 
+                UI.refreshCurrent(); 
+            } 
+        },
         
         addAccount: function() {
             const n = prompt("Nombre Cuenta (ej: Banco Falabella):");
@@ -290,9 +312,11 @@
         
         setBudget: function(cat) {
             const curr = DB.data.budgets[cat] || 0;
-            const lim = prompt(`Límite mensual para ${cat}:`, curr);
+            const lim = prompt(`Límite mensual para ${cat} (Pon 0 para borrar límite):`, curr);
             if(lim !== null) {
-                DB.data.budgets[cat] = parseFloat(lim);
+                const val = parseFloat(lim);
+                if(val === 0) delete DB.data.budgets[cat];
+                else DB.data.budgets[cat] = val;
                 DB.save(); UI.nav('budgets');
             }
         },
@@ -330,6 +354,7 @@
         // --- VISTAS ---
 
         renderDashboard: (el) => {
+            // 1. Cuentas
             let accHtml = '';
             DB.data.acc.forEach(a => {
                 const realBal = APP.getBalance(a.id);
@@ -340,18 +365,69 @@
                 </div>`;
             });
             
+            // 2. Calculos del Mes
             const month = UTILS.date().slice(0,7);
-            const monthTx = DB.data.tx.filter(t => t.date.startsWith(month) && t.type==='Gasto');
-            const totalExp = monthTx.reduce((s,t)=>s+t.amt,0);
+            const monthTx = DB.data.tx.filter(t => t.date.startsWith(month));
             
+            let inc = 0, exp = 0;
+            const catSum = {};
+            
+            monthTx.forEach(t => {
+                if(t.type === 'Ingreso') inc += t.amt;
+                if(t.type === 'Gasto') {
+                    exp += t.amt;
+                    catSum[t.cat] = (catSum[t.cat] || 0) + t.amt;
+                }
+            });
+
+            // Grafico Barras
+            const max = Math.max(inc, exp, 1);
+            const hInc = (inc/max*100) + 'px';
+            const hExp = (exp/max*100) + 'px';
+
+            // Grafico Donut
+            const sortedCats = Object.keys(catSum).sort((a,b) => catSum[b] - catSum[a]).slice(0, 5);
+            const colors = ['#0a192f', '#c5a059', '#27ae60', '#c0392b', '#8e44ad'];
+            let deg = 0, gradient = [], legend = '';
+            sortedCats.forEach((c, i) => {
+                const pct = catSum[c]/exp; 
+                const end = deg + (pct*360);
+                const col = colors[i%colors.length];
+                gradient.push(`${col} ${deg}deg ${end}deg`); deg = end;
+                legend += `<div style="display:flex;align-items:center;font-size:11px;margin-bottom:4px"><div style="width:8px;height:8px;background:${col};margin-right:8px;border-radius:2px"></div><div style="flex:1">${c}</div><div>${Math.round(pct*100)}%</div></div>`;
+            });
+            
+            if(exp===0) {
+                 gradient = ['#eee 0deg 360deg'];
+                 legend = '<small style="color:#999">Sin gastos este mes</small>';
+            }
+
             el.innerHTML = `
                 <div class="acc-scroll">${accHtml} <div class="acc-card" onclick="APP.addAccount()" style="background:#eee; color:#333; display:flex; align-items:center; justify-content:center; font-size:24px">+</div></div>
+                
+                <div class="card">
+                    <h3 style="margin-top:0">Flujo de Caja</h3>
+                    <div class="bar-container">
+                        <div class="bar-col"><div class="bar" style="background:var(--success); height:${hInc}"></div><small>Ingresos</small><br><b>${UTILS.fmt(inc)}</b></div>
+                        <div class="bar-col"><div class="bar" style="background:var(--danger); height:${hExp}"></div><small>Gastos</small><br><b>${UTILS.fmt(exp)}</b></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="margin-top:0">Gastos por Categoría</h3>
+                    <div class="donut-container">
+                        <div class="donut" style="background:conic-gradient(${gradient.join(',')})"></div>
+                        <div style="flex:1">${legend}</div>
+                    </div>
+                </div>
+
                 <div class="card">
                     <h3>🚧 Alertas de Presupuesto</h3>
                     <div id="dash-budgets"></div>
                 </div>
             `;
             
+            // Presupuestos
             const budEl = document.getElementById('dash-budgets');
             let hasBud = false;
             Object.keys(DB.data.budgets).forEach(cat => {
@@ -364,7 +440,7 @@
                     budEl.innerHTML += `<div class="budget-row"><div class="budget-info"><b>${cat}</b><span>${UTILS.fmt(st.spent)} / ${UTILS.fmt(st.limit)}</span></div><div class="prog-container"><div class="prog-bar ${color}" style="width:${Math.min(st.pct, 100)}%"></div></div>${st.remain < 0 ? `<small style="color:red">Excedido en ${UTILS.fmt(Math.abs(st.remain))}</small>` : ''}</div>`;
                 }
             });
-            if(!hasBud) budEl.innerHTML = '<small>No has configurado presupuestos. Ve a "Presupuestos" para empezar.</small>';
+            if(!hasBud) budEl.innerHTML = '<small>No has configurado presupuestos.</small>';
         },
 
         renderTransactions: (el) => {
@@ -383,18 +459,46 @@
             data.slice(0, 50).forEach(t => {
                 const accName = DB.data.acc.find(a=>a.id===t.accId)?.name || '???';
                 let icon = '💸'; if(t.type==='Ingreso') icon = '💰'; if(t.type==='Transferencia') icon = '🔄';
-                listEl.innerHTML += `<div class="tx-row" onclick="UI.editTx('${t.id}')"><div class="tx-left"><div class="tx-cat-icon">${icon}</div><div><div style="font-weight:bold">${t.cat} ${t.tags.map(tag=>`<span class="tag-badge">${tag}</span>`).join('')}</div><div style="font-size:12px; color:#888">${t.date} • ${accName}</div>${t.note ? `<div style="font-size:11px; color:#666; font-style:italic">${t.note}</div>` : ''}</div></div><div class="tx-amount" style="color:${t.type==='Ingreso'?'var(--success)':'var(--text)'}">${t.type==='Gasto'?'-':''} ${UTILS.fmt(t.amt)}</div></div>`;
+                
+                listEl.innerHTML += `
+                    <div class="tx-row">
+                        <div class="tx-left" onclick="UI.editTx('${t.id}')" style="flex:1">
+                            <div class="tx-cat-icon">${icon}</div>
+                            <div>
+                                <div style="font-weight:bold">${t.cat} ${t.tags.map(tag=>`<span class="tag-badge">${tag}</span>`).join('')}</div>
+                                <div style="font-size:12px; color:#888">${t.date} • ${accName}</div>
+                                ${t.note ? `<div style="font-size:11px; color:#666; font-style:italic">${t.note}</div>` : ''}
+                            </div>
+                        </div>
+                        <div style="text-align:right">
+                            <div class="tx-amount" style="color:${t.type==='Ingreso'?'var(--success)':'var(--text)'}">${t.type==='Gasto'?'-':''} ${UTILS.fmt(t.amt)}</div>
+                            <div style="margin-top:5px">
+                                <span class="icon-btn icon-edit" onclick="UI.editTx('${t.id}')">✏️</span>
+                                <span class="icon-btn icon-del" onclick="APP.delTx('${t.id}')">🗑️</span>
+                            </div>
+                        </div>
+                    </div>`;
             });
         },
 
         renderBudgets: (el) => {
             let html = '<div class="card"><button class="btn btn-primary" style="margin-bottom:15px" onclick="APP.addCat()">+ Nueva Categoría / Presupuesto</button><h3>Definir Límites Mensuales</h3>';
-            // Mostrar TODAS las categorías de Gasto
             const allCats = DB.data.cats.Personal.Gasto; 
             allCats.forEach(cat => {
                 const st = APP.getBudgetStatus(cat);
                 const limit = DB.data.budgets[cat] || 0;
-                html += `<div class="tx-row" onclick="APP.setBudget('${cat}')"><div><b>${cat}</b><br><small>${limit > 0 ? 'Meta: '+UTILS.fmt(limit) : 'Sin límite'}</small></div><div style="text-align:right">${st ? UTILS.fmt(st.spent) : '$0'}<div style="font-size:20px; color:var(--navy)">✎</div></div></div>`;
+                html += `
+                    <div class="tx-row">
+                        <div onclick="APP.setBudget('${cat}')" style="flex:1">
+                            <b>${cat}</b><br>
+                            <small>${limit > 0 ? 'Meta: '+UTILS.fmt(limit) : 'Sin límite'}</small>
+                        </div>
+                        <div style="text-align:right; display:flex; gap:10px; align-items:center">
+                            <span>${st ? UTILS.fmt(st.spent) : '$0'}</span>
+                            <span class="icon-btn icon-edit" onclick="APP.setBudget('${cat}')">✏️</span>
+                            <span class="icon-btn icon-del" onclick="APP.delCat('${cat}')">🗑️</span>
+                        </div>
+                    </div>`;
             });
             html += '</div>';
             el.innerHTML = html;
@@ -410,30 +514,18 @@
         renderAutopilot: (el) => {
             const y = APP.calDate.getFullYear(), m = APP.calDate.getMonth();
             const monthNames = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
-            
-            // Render del Calendario (Visual)
             const firstDay = new Date(y, m, 1).getDay() || 7;
             const daysInMonth = new Date(y, m+1, 0).getDate();
             const monthStr = APP.calDate.toISOString().slice(0,7);
-            
-            // Buscar pagos fijos y transacciones del mes
             const monthTx = DB.data.tx.filter(t => t.date.startsWith(monthStr));
             
             let calHtml = `<div class="cal-grid">`;
-            // Días vacíos
             for(let i=1; i<firstDay; i++) calHtml += `<div></div>`;
-            // Días del mes
             for(let d=1; d<=daysInMonth; d++) {
                 const dayFixes = DB.data.fix.filter(f => parseInt(f.day) === d);
                 let cls = 'cal-day';
-                let isPaid = false;
-                
-                if(dayFixes.length > 0) {
-                    cls += ' has-event';
-                    // Check si todos los fixes de este día están pagados
-                    isPaid = dayFixes.every(f => monthTx.some(t => t.cat === f.name));
-                    if(isPaid) cls += ' paid';
-                }
+                let isPaid = dayFixes.length > 0 && dayFixes.every(f => monthTx.some(t => t.cat === f.name));
+                if(dayFixes.length > 0) cls += isPaid ? ' paid has-event' : ' has-event';
                 calHtml += `<div class="${cls}">${d}</div>`;
             }
             calHtml += `</div>`;
@@ -446,13 +538,9 @@
                         <button onclick="APP.changeMonth(1)" class="btn-outline" style="width:auto; padding:5px 15px">❯</button>
                     </div>
                     ${calHtml}
-                    <div style="margin-top:15px; font-size:11px; text-align:center; color:#888">
-                        🟦 Vencimiento pendiente &nbsp; 🟩 Pagado
-                    </div>
                 </div>
-
                 <div class="card">
-                    <h3>Cuentas Fijas (Autopilot)</h3>
+                    <h3>Cuentas Fijas</h3>
                     <button class="btn btn-primary" onclick="APP.addFix()">+ Nueva Cuenta Fija</button>
                     <div id="fix-list" style="margin-top:15px"></div>
                 </div>
@@ -466,7 +554,7 @@
         },
 
         renderTools: (el) => {
-            el.innerHTML = `<div class="card"><h3>📥 Importar / Exportar</h3><button class="btn btn-gold" onclick="TOOLS.exportJSON()">Hacer Backup (JSON)</button><br><button class="btn btn-outline" onclick="document.getElementById('file-import').click()">Restaurar Backup</button><input type="file" id="file-import" style="display:none" onchange="TOOLS.importJSON(this)"></div>`;
+            el.innerHTML = `<div class="card"><h3>📥 Importar / Exportar</h3><button class="btn btn-gold" onclick="TOOLS.exportJSON()">Hacer Backup (JSON)</button><br><button class="btn btn-outline" style="border:1px solid #ccc;color:#333" onclick="document.getElementById('file-import').click()">Restaurar Backup</button><input type="file" id="file-import" style="display:none" onchange="TOOLS.importJSON(this)"></div>`;
         },
 
         // --- MODALES & FORMS ---
