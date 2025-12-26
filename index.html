@@ -26,7 +26,6 @@
         .num-btn { width: 70px; height: 70px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; }
         .num-btn:active { background: var(--gold); color: var(--navy); }
         
-        /* SHAKE ANIMATION */
         @keyframes shake {
             0% { transform: translateX(0); }
             25% { transform: translateX(-10px); }
@@ -39,7 +38,6 @@
         /* LAYOUT */
         .topbar { background: var(--white); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); z-index: 20; height: 65px; }
         .menu-btn { font-size: 24px; color: var(--navy); cursor: pointer; }
-        /* Ajuste tamaño fuente para que quepa el nombre largo */
         .app-title { font-weight: 900; color: var(--navy); font-size: 16px; letter-spacing: -0.5px; }
         
         .add-btn { background: var(--navy); color: var(--gold); border: none; padding: 0 18px; height: 38px; border-radius: 19px; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(10, 25, 47, 0.25); transition: transform 0.2s; }
@@ -240,7 +238,7 @@
     </div>
 
 <script>
-    /** SAVIA ENGINE V10.3 - BRANDING FIXED **/
+    /** SAVIA ENGINE V10.4 - CARTOLA PRO **/
     const UTILS = {
         fmt: (n) => "$" + parseInt(n).toLocaleString('es-CL'),
         id: () => Date.now().toString(36) + Math.random().toString(36).substr(2),
@@ -750,7 +748,16 @@
         },
 
         renderTools: (el) => {
-            el.innerHTML = `<div class="card"><h3>📥 Importar / Exportar</h3><button class="btn" style="background:var(--gold); color:var(--navy)" onclick="TOOLS.exportJSON()">Hacer Backup (JSON)</button><br><button class="btn" style="background:white; border:1px solid #ccc; color:#333" onclick="document.getElementById('file-import').click()">Restaurar Backup</button><input type="file" id="file-import" style="display:none" onchange="TOOLS.importJSON(this)"></div>`;
+            el.innerHTML = `
+                <div class="card">
+                    <h3>📥 Importar / Exportar</h3>
+                    <button class="btn" style="background:var(--gold); color:var(--navy)" onclick="TOOLS.exportJSON()">Hacer Backup (JSON)</button>
+                    <br>
+                    <button class="btn btn-primary" onclick="TOOLS.exportCartola()">📄 Descargar Cartola (Excel)</button>
+                    <br>
+                    <button class="btn" style="background:white; border:1px solid #ccc; color:#333" onclick="document.getElementById('file-import').click()">Restaurar Backup</button>
+                    <input type="file" id="file-import" style="display:none" onchange="TOOLS.importJSON(this)">
+                </div>`;
         },
 
         // --- MODALES & FORMS ---
@@ -876,6 +883,24 @@
                 }
             };
             reader.readAsText(file);
+        },
+        exportCartola: () => {
+            let csv = "\uFEFFFecha;Tipo;Categoría;Cuenta;Monto;Nota;Tags\n";
+            DB.data.tx.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(t => {
+                const acc = DB.data.acc.find(a => a.id === t.accId);
+                const accName = acc ? acc.name : "Cuenta Borrada";
+                const tags = t.tags ? t.tags.join(" ") : "";
+                const note = (t.note || "").replace(/;/g, ",");
+                csv += `${t.date};${t.type};${t.cat};${accName};${t.amt};${note};${tags}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `cartola_savia_${UTILS.date()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     };
 
