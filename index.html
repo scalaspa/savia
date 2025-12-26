@@ -12,78 +12,76 @@
     <title>SavIA by ScalaSpA</title>
     
     <style>
-        :root { --navy: #0a192f; --gold: #c5a059; --bg: #f4f7f6; --white: #fff; --text: #2c3e50; --danger: #c0392b; --success: #27ae60; --warning: #f39c12; }
+        :root { --navy: #0a192f; --gold: #c5a059; --bg: #f0f2f5; --white: #fff; --text: #2c3e50; --danger: #e74c3c; --success: #27ae60; --warning: #f1c40f; }
         body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
-        /* UI COMPONENTS */
-        .topbar { background: var(--white); padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 20; height: 60px; }
+        /* LAYOUT */
+        .topbar { background: var(--white); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); z-index: 20; height: 65px; }
         .menu-btn { font-size: 24px; color: var(--navy); cursor: pointer; }
-        .app-title { font-weight: 900; color: var(--navy); font-size: 18px; letter-spacing: -0.5px; }
+        .app-title { font-weight: 900; color: var(--navy); font-size: 20px; letter-spacing: -0.5px; }
         
-        /* BOTÓN NUEVO */
-        .add-btn { background: var(--navy); color: var(--gold); border: none; padding: 0 15px; height: 36px; border-radius: 18px; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 6px; cursor: pointer; box-shadow: 0 4px 10px rgba(10, 25, 47, 0.3); }
+        .add-btn { background: var(--navy); color: var(--gold); border: none; padding: 0 18px; height: 38px; border-radius: 19px; font-size: 13px; font-weight: bold; display: flex; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 4px 12px rgba(10, 25, 47, 0.25); transition: transform 0.2s; }
+        .add-btn:active { transform: scale(0.95); }
 
-        .sidebar { position: fixed; top: 0; left: 0; height: 100%; width: 280px; background: var(--navy); transform: translateX(-100%); transition: 0.3s; z-index: 100; padding: 20px; display:flex; flex-direction:column; box-shadow: 4px 0 20px rgba(0,0,0,0.2); }
+        .sidebar { position: fixed; top: 0; left: 0; height: 100%; width: 280px; background: var(--navy); transform: translateX(-100%); transition: 0.3s; z-index: 100; padding: 25px; display:flex; flex-direction:column; box-shadow: 4px 0 25px rgba(0,0,0,0.3); }
         .sidebar.active { transform: translateX(0); }
-        .nav-item { padding: 15px; color: #a8b2d1; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; gap: 10px; }
-        .nav-item.active { color: var(--gold); background: rgba(197, 160, 89, 0.1); border-left: 4px solid var(--gold); }
-        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 90; display: none; backdrop-filter: blur(2px); }
+        .nav-item { padding: 16px; color: #a8b2d1; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05); cursor: pointer; display: flex; align-items: center; gap: 12px; font-size: 15px; }
+        .nav-item.active { color: var(--gold); background: rgba(197, 160, 89, 0.15); border-left: 4px solid var(--gold); }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 90; display: none; backdrop-filter: blur(4px); }
         .overlay.active { display: block; }
 
         .main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; }
-        .card { background: var(--white); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.02); }
         
-        /* ACCOUNTS SCROLL */
-        .acc-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; margin-bottom: 15px; scroll-behavior: smooth; }
-        .acc-card { min-width: 140px; background: var(--navy); color: white; padding: 15px; border-radius: 12px; flex-shrink: 0; position: relative; overflow: hidden; }
-        .acc-card.credit { background: #34495e; }
-        .acc-name { font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
-        .acc-bal { font-size: 16px; font-weight: bold; margin-top: 5px; color: var(--gold); }
+        /* CARDS */
+        .card { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.01); }
         
-        /* --- ARREGLO GRAFICOS --- */
-        .bar-chart-wrapper { display: flex; align-items: flex-end; justify-content: space-around; height: 140px; padding-top: 20px; }
+        /* DASHBOARD CHARTS */
+        .chart-compare { display: flex; height: 160px; align-items: flex-end; justify-content: center; gap: 40px; padding-top: 20px; }
         .bar-group { display: flex; flex-direction: column; align-items: center; width: 60px; height: 100%; justify-content: flex-end; }
-        .bar-visual { width: 40px; border-radius: 6px 6px 0 0; transition: height 0.5s ease; min-height: 4px; position: relative; }
-        .bar-label { font-size: 11px; color: #666; margin-top: 8px; font-weight: bold; }
-        .bar-value { font-size: 13px; font-weight: 800; color: var(--navy); margin-top: 2px; }
-        
-        .donut-container { display:flex; align-items:center; gap:20px; justify-content:center; margin-top:10px; }
-        .donut { width:100px; height:100px; border-radius:50%; flex-shrink:0; border:8px solid #f4f7f6; }
+        .bar-visual { width: 50px; border-radius: 8px 8px 0 0; transition: height 0.8s; min-height: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .bar-label { font-size: 12px; color: #555; margin-top: 10px; font-weight: 600; }
+        .bar-value { font-size: 14px; font-weight: 800; color: var(--navy); margin-bottom: 5px; }
 
+        .donut-container { display:flex; align-items:center; gap:20px; justify-content:center; margin-top:10px; }
+        .donut { width:120px; height:120px; border-radius:50%; flex-shrink:0; border:10px solid #f4f7f6; }
+
+        /* ACCOUNTS CARD STYLE (NEW) */
+        .acc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .acc-actions { display: flex; gap: 15px; margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; justify-content: flex-end; }
+        .acc-action-btn { font-size: 12px; color: #666; cursor: pointer; display: flex; align-items: center; gap: 5px; background: #f9f9f9; padding: 5px 10px; border-radius: 8px; }
+
+        /* SCROLL HORIZONTAL CUENTAS (DASHBOARD) */
+        .acc-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 5px; scroll-behavior: smooth; }
+        .acc-mini-card { min-width: 150px; background: white; padding: 15px; border-radius: 16px; flex-shrink: 0; border: 1px solid #eee; }
+        
         /* PRESUPUESTOS */
-        .prog-container { background: #eee; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 5px; }
+        .budget-row { margin-bottom: 15px; }
+        .budget-info { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; font-weight: 600; color: #444; }
+        .prog-container { background: #eee; height: 8px; border-radius: 4px; overflow: hidden; }
         .prog-bar { height: 100%; background: var(--success); transition: 0.5s; }
         .prog-bar.warn { background: var(--warning); }
         .prog-bar.danger { background: var(--danger); }
-        .budget-row { margin-bottom: 15px; }
+
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #fff; width: 92%; max-width: 420px; padding: 25px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
+        .form-control { width: 100%; padding: 14px; border: 1px solid #e0e0e0; border-radius: 12px; font-size: 16px; background: #fafafa; transition: 0.2s; margin-bottom: 15px; }
+        .btn { padding: 16px; border-radius: 14px; border: none; font-weight: 800; width: 100%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-primary { background: var(--navy); color: white; box-shadow: 0 4px 15px rgba(10, 25, 47, 0.3); }
+
+        /* LISTS */
+        .tx-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f5f5f5; }
+        .icon-btn { cursor:pointer; font-size:18px; padding:8px; border-radius:8px; transition: background 0.2s; }
+        .icon-del { color: var(--danger); }
+        .tag-badge { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #666; margin-left: 5px; }
 
         /* CALENDAR */
         .cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 10px; }
-        .cal-day { height: 45px; border: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: center; border-radius: 8px; font-size: 12px; position: relative; background: #fff; font-weight: bold; color: #555; }
-        .cal-day.has-event { background: #e3f2fd; color: var(--navy); border-color: #bbdefb; }
-        .cal-day.paid { background: #d4edda; color: #155724; border-color: #c3e6cb; }
-
-        /* FORMS & MODAL */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
-        .modal-box { background: #fff; width: 92%; max-width: 420px; padding: 25px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
-        .form-group { margin-bottom: 15px; }
-        .form-label { font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; display: block; }
-        .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; background: #f9f9f9; transition: 0.2s; }
-        .btn { padding: 14px; border-radius: 10px; border: none; font-weight: bold; width: 100%; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-primary { background: var(--navy); color: white; }
-        .btn-gold { background: var(--gold); color: var(--navy); }
-        
-        /* TABLE & LISTS */
-        .tx-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #eee; }
-        .tx-left { display: flex; gap: 10px; align-items: center; }
-        .tx-cat-icon { width: 35px; height: 35px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-        .tx-amount { font-weight: bold; font-size: 15px; }
-        .tag-badge { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #666; margin-left: 5px; }
-        .icon-btn { cursor:pointer; font-size:18px; padding:5px; }
-        .icon-del { color: #e74c3c; }
-        .icon-edit { color: var(--navy); }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; }
+        .cal-day { height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 12px; background: #f8f9fa; color: #666; font-weight: 600; }
+        .cal-day.has-event { background: #e3f2fd; color: var(--navy); border: 1px solid #bbdefb; }
+        .cal-day.paid { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
     </style>
 </head>
 <body>
@@ -91,9 +89,9 @@
     <div class="overlay" onclick="UI.toggleMenu()"></div>
     
     <nav class="sidebar" id="sidebar">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
-            <div class="app-title" style="color:var(--gold)">SavIA <small style="font-size:10px">by ScalaSpA</small></div>
-            <div onclick="UI.toggleMenu()" style="color:white; font-size:20px; cursor:pointer">✕</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px">
+            <div class="app-title" style="color:var(--gold); font-size:22px">SavIA</div>
+            <div onclick="UI.toggleMenu()" style="color:white; font-size:24px; cursor:pointer; padding:5px">✕</div>
         </div>
         <div class="nav-item active" onclick="UI.nav('dashboard')">📊 Dashboard</div>
         <div class="nav-item" onclick="UI.nav('budgets')">⚖️ Presupuestos</div>
@@ -116,63 +114,57 @@
 
     <div id="modal-tx" class="modal">
         <div class="modal-box">
-            <h3 id="modal-title" style="margin-top:0; color:var(--navy)">Nuevo Movimiento</h3>
+            <h3 id="modal-title" style="margin-top:0; color:var(--navy); font-size:22px; margin-bottom:20px">Nuevo Movimiento</h3>
             
-            <div class="form-group">
-                <div style="display:flex; gap:5px; margin-bottom:10px">
-                    <button class="btn btn-primary" onclick="UI.setTxType('Gasto')" id="btn-type-gasto" style="flex:1; opacity:0.5">Gasto</button>
-                    <button class="btn btn-primary" onclick="UI.setTxType('Ingreso')" id="btn-type-ingreso" style="flex:1; opacity:0.5">Ingreso</button>
-                    <button class="btn btn-primary" onclick="UI.setTxType('Transferencia')" id="btn-type-transf" style="flex:1; opacity:0.5">Transf.</button>
+            <div style="display:flex; gap:8px; margin-bottom:20px; background:#f5f5f5; padding:4px; border-radius:12px">
+                <button class="btn" onclick="UI.setTxType('Gasto')" id="btn-type-gasto" style="flex:1; padding:10px; font-size:13px; background:white; color:var(--text); box-shadow:0 2px 5px rgba(0,0,0,0.05)">Gasto</button>
+                <button class="btn" onclick="UI.setTxType('Ingreso')" id="btn-type-ingreso" style="flex:1; padding:10px; font-size:13px; background:transparent; color:#888">Ingreso</button>
+                <button class="btn" onclick="UI.setTxType('Transferencia')" id="btn-type-transf" style="flex:1; padding:10px; font-size:13px; background:transparent; color:#888">Transf.</button>
+            </div>
+
+            <label style="font-size:12px; font-weight:bold; color:#888; margin-left:5px">MONTO</label>
+            <input type="number" id="inp-amt" class="form-control" placeholder="$0" style="font-size:28px; font-weight:900; color:var(--navy); padding:10px;">
+
+            <div id="group-cat">
+                <label style="font-size:12px; font-weight:bold; color:#888; margin-left:5px">CATEGORÍA</label>
+                <div style="display:flex; gap:8px; margin-bottom:15px">
+                    <select id="inp-cat" class="form-control" style="margin-bottom:0"></select>
+                    <button onclick="APP.addCat()" style="width:50px; border:1px solid #e0e0e0; background:#f0f0f0; border-radius:12px; font-size:20px; color:var(--navy)">+</button>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">Monto</label>
-                <input type="number" id="inp-amt" class="form-control" placeholder="$0" style="font-size:24px; font-weight:bold; color:var(--navy)">
-            </div>
-
-            <div class="form-group" id="group-cat">
-                <label class="form-label">Categoría</label>
-                <div style="display:flex; gap:5px">
-                    <select id="inp-cat" class="form-control"></select>
-                    <button onclick="APP.addCat()" style="width:45px; border:1px solid #ddd; background:#eee; border-radius:8px">+</button>
-                </div>
-            </div>
-
-            <div class="form-group" id="group-acc-source">
-                <label class="form-label">Cuenta (Origen)</label>
+            <div id="group-acc-source">
+                <label style="font-size:12px; font-weight:bold; color:#888; margin-left:5px">CUENTA ORIGEN</label>
                 <select id="inp-acc" class="form-control"></select>
             </div>
             
-            <div class="form-group" id="group-acc-dest" style="display:none">
-                <label class="form-label">A Cuenta (Destino)</label>
+            <div id="group-acc-dest" style="display:none">
+                <label style="font-size:12px; font-weight:bold; color:#888; margin-left:5px">CUENTA DESTINO</label>
                 <select id="inp-acc-dest" class="form-control"></select>
             </div>
 
-            <div class="form-group">
-                <div style="display:flex; gap:10px">
-                    <div style="flex:1">
-                        <label class="form-label">Fecha</label>
-                        <input type="date" id="inp-date" class="form-control">
-                    </div>
-                    <div style="flex:1">
-                        <label class="form-label">Etiqueta (Tag)</label>
-                        <input type="text" id="inp-tag" class="form-control" placeholder="#Viaje">
-                    </div>
+            <div style="display:flex; gap:15px">
+                <div style="flex:1">
+                    <label style="font-size:12px; font-weight:bold; color:#888; margin-left:5px">FECHA</label>
+                    <input type="date" id="inp-date" class="form-control">
+                </div>
+                <div style="flex:1">
+                    <label style="font-size:12px; font-weight:bold; color:#888; margin-left:5px">TAG</label>
+                    <input type="text" id="inp-tag" class="form-control" placeholder="#Viaje">
                 </div>
             </div>
 
-            <input type="text" id="inp-note" class="form-control" placeholder="Nota (Opcional)" style="margin-bottom:20px">
+            <input type="text" id="inp-note" class="form-control" placeholder="Nota opcional..." style="font-style:italic">
             
-            <div style="display:flex; gap:10px">
+            <div style="display:flex; gap:15px; margin-top:10px">
                 <button class="btn btn-primary" onclick="APP.saveTx()">Guardar</button>
-                <button class="btn" style="background:#eee; color:#333" onclick="UI.closeModal()">Cancelar</button>
+                <button class="btn" style="background:#f0f0f0; color:#555" onclick="UI.closeModal()">Cancelar</button>
             </div>
         </div>
     </div>
 
 <script>
-    /** SAVIA ENGINE V7.1 - BRANDING & VISUAL FIXES **/
+    /** SAVIA ENGINE V8.5 - GESTIÓN TOTAL **/
     const UTILS = {
         fmt: (n) => "$" + parseInt(n).toLocaleString('es-CL'),
         id: () => Date.now().toString(36) + Math.random().toString(36).substr(2),
@@ -181,21 +173,18 @@
 
     const DB = {
         data: { tx: [], acc: [], budgets: {}, goals: [], fix: [], cats: {} },
-        
         init: function() {
             const raw = localStorage.getItem('savia_db_v5');
-            if(raw) {
-                this.data = JSON.parse(raw);
-            } else {
-                this.migrateFromV4();
-            }
+            if(raw) this.data = JSON.parse(raw);
+            else this.migrate();
+            
             if(!this.data.acc.length) this.data.acc = [{id:'acc_def', name:'Efectivo', type:'Efectivo', bal:0}];
             if(!this.data.cats.Personal) this.data.cats = { 
                 Personal: { Gasto: ['Alimentación','Transporte','Hogar','Salud','Ocio'], Ingreso: ['Sueldo','Extra'] } 
             };
         },
         save: function() { localStorage.setItem('savia_db_v5', JSON.stringify(this.data)); },
-        migrateFromV4: function() {
+        migrate: function() {
             const oldTx = JSON.parse(localStorage.getItem('scala_uc_tx') || '[]');
             this.data.acc = [{id:'def', name:'Cuenta Principal', type:'Efectivo', bal:0}];
             this.data.tx = oldTx.map(t => ({...t, accId: 'def', tags: []}));
@@ -232,26 +221,24 @@
             const limit = DB.data.budgets[cat] || 0;
             if(limit === 0) return null;
             const month = UTILS.date().slice(0,7);
-            const spent = DB.data.tx
-                .filter(t => t.cat === cat && t.type === 'Gasto' && t.date.startsWith(month))
-                .reduce((s, t) => s + t.amt, 0);
+            const spent = DB.data.tx.filter(t => t.cat === cat && t.type === 'Gasto' && t.date.startsWith(month)).reduce((s, t) => s + t.amt, 0);
             return { limit, spent, pct: (spent/limit)*100, remain: limit - spent };
         },
 
         addCat: function() {
-            const n = prompt("Nombre de Nueva Categoría:");
-            if(n) { 
-                if(!DB.data.cats.Personal.Gasto.includes(n)) {
-                    DB.data.cats.Personal.Gasto.push(n); 
+            const n = prompt("Nombre de Nueva Categoría (" + APP.currTxType + "):");
+            if(n && APP.currTxType !== 'Transferencia') {
+                if(!DB.data.cats.Personal[APP.currTxType].includes(n)) {
+                    DB.data.cats.Personal[APP.currTxType].push(n); 
                     DB.save(); 
                 }
                 UI.renderCatOpts(); 
-                if(UI.currView === 'budgets') UI.renderBudgets(document.getElementById('main-container'));
             }
         },
 
         delCat: function(catName) {
-            if(confirm(`¿Eliminar la categoría "${catName}"?\nSe borrará del listado de presupuestos.`)) {
+            if(confirm(`¿Borrar categoría "${catName}"?`)) {
+                // Borrar de todas las listas por si acaso
                 DB.data.cats.Personal.Gasto = DB.data.cats.Personal.Gasto.filter(c => c !== catName);
                 if(DB.data.budgets[catName]) delete DB.data.budgets[catName];
                 DB.save();
@@ -278,7 +265,7 @@
             if(APP.currTxType === 'Transferencia') {
                 txObj.destId = document.getElementById('inp-acc-dest').value;
                 txObj.cat = 'Transferencia';
-                if(txObj.accId === txObj.destId) return alert("Origen y destino iguales");
+                if(txObj.accId === txObj.destId) return alert("Cuentas iguales");
             }
 
             if(APP.editId) {
@@ -293,39 +280,50 @@
             UI.refreshCurrent();
         },
         
-        delTx: (id) => { 
-            if(confirm("¿Estás seguro de borrar este movimiento?")) { 
-                DB.data.tx = DB.data.tx.filter(t=>t.id!==id); 
-                DB.save(); 
-                UI.refreshCurrent(); 
-            } 
-        },
+        delTx: (id) => { if(confirm("¿Eliminar movimiento?")) { DB.data.tx = DB.data.tx.filter(t=>t.id!==id); DB.save(); UI.refreshCurrent(); } },
         
+        // --- GESTION DE CUENTAS MEJORADA ---
         addAccount: function() {
-            const n = prompt("Nombre Cuenta (ej: Banco Falabella):");
-            const t = prompt("Tipo (Débito, Crédito, Efectivo):");
-            const b = prompt("Saldo Inicial Actual:", "0");
-            if(n) { 
-                DB.data.acc.push({id: UTILS.id(), name: n, type: t || 'Banco', bal: parseFloat(b)});
-                DB.save(); UI.nav('accounts');
+            const n = prompt("Nombre Cuenta:");
+            const t = prompt("Tipo (Banco, Efectivo, Tarjeta):");
+            const b = prompt("Saldo Inicial:", "0");
+            if(n) { DB.data.acc.push({id: UTILS.id(), name: n, type: t || 'Banco', bal: parseFloat(b)}); DB.save(); UI.nav('accounts'); }
+        },
+
+        editAccount: function(id) {
+            const acc = DB.data.acc.find(a => a.id === id);
+            const newName = prompt("Editar Nombre:", acc.name);
+            const newType = prompt("Editar Tipo:", acc.type);
+            const newBal = prompt("Corregir Saldo Inicial:", acc.bal);
+            
+            if(newName) {
+                acc.name = newName;
+                if(newType) acc.type = newType;
+                if(newBal !== null) acc.bal = parseFloat(newBal);
+                DB.save();
+                UI.refreshCurrent();
+            }
+        },
+
+        delAccount: function(id) {
+            if(confirm("¿Borrar esta cuenta?\n(Los movimientos quedarán huerfanos pero no se borrarán)")) {
+                DB.data.acc = DB.data.acc.filter(a => a.id !== id);
+                DB.save();
+                UI.refreshCurrent();
             }
         },
         
         setBudget: function(cat) {
             const curr = DB.data.budgets[cat] || 0;
-            const lim = prompt(`Límite mensual para ${cat} (Pon 0 para borrar límite):`, curr);
+            const lim = prompt(`Límite para ${cat} (0 para borrar):`, curr);
             if(lim !== null) {
                 const val = parseFloat(lim);
-                if(val === 0) delete DB.data.budgets[cat];
-                else DB.data.budgets[cat] = val;
+                if(val === 0) delete DB.data.budgets[cat]; else DB.data.budgets[cat] = val;
                 DB.save(); UI.nav('budgets');
             }
         },
 
-        changeMonth: (delta) => {
-            APP.calDate.setMonth(APP.calDate.getMonth() + delta);
-            UI.refreshCurrent();
-        }
+        changeMonth: (delta) => { APP.calDate.setMonth(APP.calDate.getMonth() + delta); UI.refreshCurrent(); }
     };
 
     const UI = {
@@ -352,76 +350,66 @@
 
         refreshCurrent: () => UI.nav(UI.currView),
 
-        // --- VISTAS ---
-
+        // --- DASHBOARD ---
         renderDashboard: (el) => {
-            let accHtml = '';
-            DB.data.acc.forEach(a => {
-                const realBal = APP.getBalance(a.id);
-                accHtml += `<div class="acc-card ${a.type==='Crédito'?'credit':''}">
-                    <div class="acc-name">${a.name}</div>
-                    <div class="acc-bal">${UTILS.fmt(realBal)}</div>
-                    <div style="font-size:10px; margin-top:5px; opacity:0.7">${a.type}</div>
-                </div>`;
-            });
-            
             const month = UTILS.date().slice(0,7);
             const monthTx = DB.data.tx.filter(t => t.date.startsWith(month));
             
             let inc = 0, exp = 0;
             const catSum = {};
-            
             monthTx.forEach(t => {
                 if(t.type === 'Ingreso') inc += t.amt;
-                if(t.type === 'Gasto') {
-                    exp += t.amt;
-                    catSum[t.cat] = (catSum[t.cat] || 0) + t.amt;
-                }
+                if(t.type === 'Gasto') { exp += t.amt; catSum[t.cat] = (catSum[t.cat] || 0) + t.amt; }
             });
 
-            // Grafico Barras Corregido
-            const max = Math.max(inc, exp, 1);
-            // Usamos una altura relativa, dejando espacio arriba
-            const hInc = (inc/max*100) + 'px';
-            const hExp = (exp/max*100) + 'px';
+            const maxVal = Math.max(inc, exp, 1); 
+            const hInc = (inc / maxVal * 100) + '%'; 
+            const hExp = (exp / maxVal * 100) + '%';
 
-            const sortedCats = Object.keys(catSum).sort((a,b) => catSum[b] - catSum[a]).slice(0, 5);
+            const sortedCats = Object.keys(catSum).sort((a,b) => catSum[b] - catSum[a]);
             const colors = ['#0a192f', '#c5a059', '#27ae60', '#c0392b', '#8e44ad'];
             let deg = 0, gradient = [], legend = '';
-            sortedCats.forEach((c, i) => {
-                const pct = catSum[c]/exp; 
-                const end = deg + (pct*360);
-                const col = colors[i%colors.length];
-                gradient.push(`${col} ${deg}deg ${end}deg`); deg = end;
-                legend += `<div style="display:flex;align-items:center;font-size:11px;margin-bottom:4px"><div style="width:8px;height:8px;background:${col};margin-right:8px;border-radius:2px"></div><div style="flex:1">${c}</div><div>${Math.round(pct*100)}%</div></div>`;
-            });
             
-            if(exp===0) {
-                 gradient = ['#eee 0deg 360deg'];
-                 legend = '<small style="color:#999">Sin gastos este mes</small>';
+            if(exp > 0) {
+                sortedCats.slice(0,5).forEach((c, i) => {
+                    const pct = catSum[c]/exp; 
+                    const end = deg + (pct*360);
+                    const col = colors[i%colors.length];
+                    gradient.push(`${col} ${deg}deg ${end}deg`); deg = end;
+                    legend += `<div style="display:flex;align-items:center;font-size:11px;margin-bottom:4px"><div style="width:8px;height:8px;background:${col};margin-right:8px;border-radius:2px"></div><div style="flex:1">${c}</div><div>${Math.round(pct*100)}%</div></div>`;
+                });
+            } else {
+                gradient = ['#eee 0deg 360deg'];
+                legend = '<small style="color:#999">Sin datos</small>';
             }
 
+            // Cuentas Mini
+            let accHtml = '';
+            DB.data.acc.forEach(a => {
+                accHtml += `<div class="acc-mini-card"><div class="acc-name">${a.name}</div><div class="acc-bal">${UTILS.fmt(APP.getBalance(a.id))}</div></div>`;
+            });
+
             el.innerHTML = `
-                <div class="acc-scroll">${accHtml} <div class="acc-card" onclick="APP.addAccount()" style="background:#eee; color:#333; display:flex; align-items:center; justify-content:center; font-size:24px">+</div></div>
+                <div class="acc-scroll">${accHtml} <div class="acc-mini-card" onclick="APP.addAccount()" style="background:#eee; display:flex; align-items:center; justify-content:center; font-size:24px">+</div></div>
                 
                 <div class="card">
-                    <h3 style="margin-top:0">Flujo de Caja</h3>
-                    <div class="bar-chart-wrapper">
+                    <h3 class="card-title">Flujo de Caja</h3>
+                    <div class="chart-compare">
                         <div class="bar-group">
+                             <div class="bar-value">${UTILS.fmt(inc)}</div>
                              <div class="bar-visual" style="background:var(--success); height:${hInc}"></div>
                              <div class="bar-label">Ingresos</div>
-                             <div class="bar-value">${UTILS.fmt(inc)}</div>
                         </div>
                         <div class="bar-group">
+                             <div class="bar-value">${UTILS.fmt(exp)}</div>
                              <div class="bar-visual" style="background:var(--danger); height:${hExp}"></div>
                              <div class="bar-label">Gastos</div>
-                             <div class="bar-value">${UTILS.fmt(exp)}</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h3 style="margin-top:0">Gastos por Categoría</h3>
+                    <h3 class="card-title">Distribución</h3>
                     <div class="donut-container">
                         <div class="donut" style="background:conic-gradient(${gradient.join(',')})"></div>
                         <div style="flex:1">${legend}</div>
@@ -429,29 +417,26 @@
                 </div>
 
                 <div class="card">
-                    <h3>🚧 Alertas de Presupuesto</h3>
+                    <h3 class="card-title">Alertas Presupuesto</h3>
                     <div id="dash-budgets"></div>
                 </div>
             `;
             
-            // Presupuestos
             const budEl = document.getElementById('dash-budgets');
             let hasBud = false;
             Object.keys(DB.data.budgets).forEach(cat => {
                 const st = APP.getBudgetStatus(cat);
                 if(st && st.limit > 0) {
                     hasBud = true;
-                    let color = ''; 
-                    if(st.pct > 100) color = 'danger';
-                    else if(st.pct > 80) color = 'warn';
-                    budEl.innerHTML += `<div class="budget-row"><div class="budget-info"><b>${cat}</b><span>${UTILS.fmt(st.spent)} / ${UTILS.fmt(st.limit)}</span></div><div class="prog-container"><div class="prog-bar ${color}" style="width:${Math.min(st.pct, 100)}%"></div></div>${st.remain < 0 ? `<small style="color:red">Excedido en ${UTILS.fmt(Math.abs(st.remain))}</small>` : ''}</div>`;
+                    let color = ''; if(st.pct > 100) color = 'danger'; else if(st.pct > 80) color = 'warn';
+                    budEl.innerHTML += `<div class="budget-row"><div class="budget-info"><b>${cat}</b><span>${UTILS.fmt(st.spent)} / ${UTILS.fmt(st.limit)}</span></div><div class="prog-container"><div class="prog-bar ${color}" style="width:${Math.min(st.pct, 100)}%"></div></div>${st.remain < 0 ? `<small style="color:red">Excedido: ${UTILS.fmt(Math.abs(st.remain))}</small>` : ''}</div>`;
                 }
             });
-            if(!hasBud) budEl.innerHTML = '<small>No has configurado presupuestos.</small>';
+            if(!hasBud) budEl.innerHTML = '<small style="color:#999">Sin presupuestos activos</small>';
         },
 
         renderTransactions: (el) => {
-            el.innerHTML = `<div class="card"><input type="text" id="search-tx" class="form-control" placeholder="🔍 Buscar por nota, tag o categoría..." onkeyup="UI.renderTxList(this.value)"></div><div class="card" id="tx-list"></div>`;
+            el.innerHTML = `<div class="card"><input type="text" id="search-tx" class="form-control" placeholder="🔍 Buscar..." onkeyup="UI.renderTxList(this.value)" style="margin-bottom:0"></div><div class="card" id="tx-list"></div>`;
             UI.renderTxList();
         },
 
@@ -469,18 +454,20 @@
                 
                 listEl.innerHTML += `
                     <div class="tx-row">
-                        <div class="tx-left" onclick="UI.editTx('${t.id}')" style="flex:1">
-                            <div class="tx-cat-icon">${icon}</div>
-                            <div>
-                                <div style="font-weight:bold">${t.cat} ${t.tags.map(tag=>`<span class="tag-badge">${tag}</span>`).join('')}</div>
-                                <div style="font-size:12px; color:#888">${t.date} • ${accName}</div>
-                                ${t.note ? `<div style="font-size:11px; color:#666; font-style:italic">${t.note}</div>` : ''}
+                        <div style="flex:1" onclick="UI.editTx('${t.id}')">
+                            <div style="display:flex; align-items:center; gap:10px">
+                                <div style="background:#f4f7f6; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center">${icon}</div>
+                                <div>
+                                    <div style="font-weight:bold; font-size:14px">${t.cat} ${t.tags.map(tag=>`<span class="tag-badge">${tag}</span>`).join('')}</div>
+                                    <div style="font-size:11px; color:#888">${t.date} • ${accName}</div>
+                                    ${t.note ? `<div style="font-size:11px; color:#666; font-style:italic">${t.note}</div>` : ''}
+                                </div>
                             </div>
                         </div>
                         <div style="text-align:right">
-                            <div class="tx-amount" style="color:${t.type==='Ingreso'?'var(--success)':'var(--text)'}">${t.type==='Gasto'?'-':''} ${UTILS.fmt(t.amt)}</div>
+                            <div style="font-weight:bold; color:${t.type==='Ingreso'?'var(--success)':'var(--text)'}">${t.type==='Gasto'?'-':''} ${UTILS.fmt(t.amt)}</div>
                             <div style="margin-top:5px">
-                                <span class="icon-btn icon-edit" onclick="UI.editTx('${t.id}')">✏️</span>
+                                <span class="icon-btn" onclick="UI.editTx('${t.id}')">✏️</span>
                                 <span class="icon-btn icon-del" onclick="APP.delTx('${t.id}')">🗑️</span>
                             </div>
                         </div>
@@ -489,7 +476,7 @@
         },
 
         renderBudgets: (el) => {
-            let html = '<div class="card"><button class="btn btn-primary" style="margin-bottom:15px" onclick="APP.addCat()">+ Nueva Categoría / Presupuesto</button><h3>Definir Límites Mensuales</h3>';
+            let html = '<div class="card"><button class="btn btn-primary" style="margin-bottom:15px" onclick="APP.addCat()">+ Nueva Categoría</button><h3>Presupuestos Mensuales</h3>';
             const allCats = DB.data.cats.Personal.Gasto; 
             allCats.forEach(cat => {
                 const st = APP.getBudgetStatus(cat);
@@ -498,11 +485,11 @@
                     <div class="tx-row">
                         <div onclick="APP.setBudget('${cat}')" style="flex:1">
                             <b>${cat}</b><br>
-                            <small>${limit > 0 ? 'Meta: '+UTILS.fmt(limit) : 'Sin límite'}</small>
+                            <small>${limit > 0 ? 'Límite: '+UTILS.fmt(limit) : 'Sin límite'}</small>
                         </div>
                         <div style="text-align:right; display:flex; gap:10px; align-items:center">
                             <span>${st ? UTILS.fmt(st.spent) : '$0'}</span>
-                            <span class="icon-btn icon-edit" onclick="APP.setBudget('${cat}')">✏️</span>
+                            <span class="icon-btn" onclick="APP.setBudget('${cat}')">✏️</span>
                             <span class="icon-btn icon-del" onclick="APP.delCat('${cat}')">🗑️</span>
                         </div>
                     </div>`;
@@ -514,7 +501,22 @@
         renderAccounts: (el) => {
             el.innerHTML = `<button class="btn btn-primary" style="margin-bottom:15px" onclick="APP.addAccount()">+ Nueva Cuenta</button>`;
             DB.data.acc.forEach(a => {
-                el.innerHTML += `<div class="card" style="display:flex; justify-content:space-between"><div><h3>${a.name}</h3><div style="color:#666">${a.type}</div></div><div style="text-align:right"><h2 style="color:var(--gold); margin:0">${UTILS.fmt(APP.getBalance(a.id))}</h2><small>Saldo Actual</small></div></div>`;
+                el.innerHTML += `
+                    <div class="card">
+                        <div class="acc-row">
+                            <div>
+                                <h3 style="margin:0; font-size:16px">${a.name}</h3>
+                                <div style="font-size:12px; color:#888">${a.type}</div>
+                            </div>
+                            <div style="text-align:right">
+                                <h2 style="color:var(--navy); margin:0">${UTILS.fmt(APP.getBalance(a.id))}</h2>
+                            </div>
+                        </div>
+                        <div class="acc-actions">
+                             <div class="acc-action-btn" onclick="APP.editAccount('${a.id}')">✏️ Editar</div>
+                             <div class="acc-action-btn" onclick="APP.delAccount('${a.id}')" style="color:var(--danger)">🗑️ Borrar</div>
+                        </div>
+                    </div>`;
             });
         },
 
@@ -540,9 +542,9 @@
             el.innerHTML = `
                 <div class="card">
                     <div class="cal-header">
-                        <button onclick="APP.changeMonth(-1)" class="btn-outline" style="width:auto; padding:5px 15px">❮</button>
+                        <button onclick="APP.changeMonth(-1)" class="btn" style="width:auto; padding:5px 15px; background:#f0f0f0; color:#333">❮</button>
                         <b style="color:var(--navy); font-size:16px">${monthNames[m]} ${y}</b>
-                        <button onclick="APP.changeMonth(1)" class="btn-outline" style="width:auto; padding:5px 15px">❯</button>
+                        <button onclick="APP.changeMonth(1)" class="btn" style="width:auto; padding:5px 15px; background:#f0f0f0; color:#333">❯</button>
                     </div>
                     ${calHtml}
                 </div>
@@ -556,12 +558,12 @@
             const list = document.getElementById('fix-list');
             DB.data.fix.forEach(f => {
                 const isPaid = monthTx.some(t => t.cat === f.name);
-                list.innerHTML += `<div class="tx-row"><div><b>${f.name}</b> (Día ${f.day})<br><small>${UTILS.fmt(f.cost)}</small></div><div>${isPaid ? '<span style="color:green; font-weight:bold">✅ Pagado</span>' : `<button class="btn-gold" style="padding:5px 10px; font-size:12px" onclick="APP.quickPay('${f.name}', ${f.cost})">Pagar</button>`}</div></div>`;
+                list.innerHTML += `<div class="tx-row"><div><b>${f.name}</b> (Día ${f.day})<br><small>${UTILS.fmt(f.cost)}</small></div><div>${isPaid ? '<span style="color:green; font-weight:bold">✅ Pagado</span>' : `<button class="btn-gold" style="padding:5px 10px; font-size:12px; border-radius:6px" onclick="APP.quickPay('${f.name}', ${f.cost})">Pagar</button>`}</div></div>`;
             });
         },
 
         renderTools: (el) => {
-            el.innerHTML = `<div class="card"><h3>📥 Importar / Exportar</h3><button class="btn btn-gold" onclick="TOOLS.exportJSON()">Hacer Backup (JSON)</button><br><button class="btn btn-outline" style="border:1px solid #ccc;color:#333" onclick="document.getElementById('file-import').click()">Restaurar Backup</button><input type="file" id="file-import" style="display:none" onchange="TOOLS.importJSON(this)"></div>`;
+            el.innerHTML = `<div class="card"><h3>📥 Importar / Exportar</h3><button class="btn" style="background:var(--gold); color:var(--navy)" onclick="TOOLS.exportJSON()">Hacer Backup (JSON)</button><br><button class="btn" style="background:white; border:1px solid #ccc; color:#333" onclick="document.getElementById('file-import').click()">Restaurar Backup</button><input type="file" id="file-import" style="display:none" onchange="TOOLS.importJSON(this)"></div>`;
         },
 
         // --- MODALES & FORMS ---
@@ -596,10 +598,18 @@
 
         setTxType: (type) => {
             APP.currTxType = type;
-            ['gasto','ingreso','transf'].forEach(t => document.getElementById('btn-type-'+t).style.opacity = '0.5');
-            if(type==='Gasto') document.getElementById('btn-type-gasto').style.opacity = '1';
-            if(type==='Ingreso') document.getElementById('btn-type-ingreso').style.opacity = '1';
-            if(type==='Transferencia') document.getElementById('btn-type-transf').style.opacity = '1';
+            ['gasto','ingreso','transf'].forEach(t => {
+                const btn = document.getElementById('btn-type-'+t);
+                btn.style.background = 'transparent';
+                btn.style.color = '#888';
+                btn.style.boxShadow = 'none';
+            });
+            const activeBtn = document.getElementById('btn-type-'+type.toLowerCase().substring(0,6)); // gasto, ingreso, transf
+            if(activeBtn) {
+                activeBtn.style.background = 'white';
+                activeBtn.style.color = 'var(--text)';
+                activeBtn.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
+            }
 
             if(type === 'Transferencia') {
                 document.getElementById('group-cat').style.display = 'none';
