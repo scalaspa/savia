@@ -26,16 +26,6 @@
         .num-btn { width: 70px; height: 70px; border-radius: 50%; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.1s; }
         .num-btn:active { background: var(--gold); color: var(--navy); }
         
-        /* SHAKE ANIMATION (iPhone Style) */
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
-            75% { transform: translateX(-10px); }
-            100% { transform: translateX(0); }
-        }
-        .shake { animation: shake 0.3s ease-in-out; }
-        
         /* LAYOUT */
         .topbar { background: var(--white); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.05); z-index: 20; height: 65px; }
         .menu-btn { font-size: 24px; color: var(--navy); cursor: pointer; }
@@ -239,7 +229,7 @@
     </div>
 
 <script>
-    /** SAVIA ENGINE V10.2 - FINAL STABLE **/
+    /** SAVIA ENGINE V10.1 - FIXES **/
     const UTILS = {
         fmt: (n) => "$" + parseInt(n).toLocaleString('es-CL'),
         id: () => Date.now().toString(36) + Math.random().toString(36).substr(2),
@@ -299,11 +289,6 @@
                     this.unlock();
                 } else {
                     navigator.vibrate(200);
-                    // ANIMACION DE TEMBLOR
-                    const dots = document.querySelector('.pin-dots');
-                    dots.classList.add('shake');
-                    setTimeout(() => dots.classList.remove('shake'), 300);
-                    
                     document.getElementById('lock-msg').innerText = "PIN Incorrecto";
                     document.getElementById('lock-msg').style.color = "var(--danger)";
                     setTimeout(() => {
@@ -379,6 +364,7 @@
         getFilteredTx: function() {
             const now = new Date();
             let filterPrefix = '';
+            
             if(this.filterRange === 'month') {
                 filterPrefix = now.toISOString().slice(0,7);
             } else if(this.filterRange === 'prev') {
@@ -786,7 +772,7 @@
         setTxType: (type) => {
             APP.currTxType = type;
             
-            // 1. Resetear todos
+            // 1. Resetear todos a gris
             ['gasto','ingreso','transf'].forEach(t => {
                 const btn = document.getElementById('btn-type-'+t);
                 btn.style.background = 'transparent';
