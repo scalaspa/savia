@@ -12,7 +12,7 @@
     <title>SavIA by ScalaSpA</title>
     
     <style>
-        :root { --navy: #0a192f; --gold: #c5a059; --bg: #f0f2f5; --white: #fff; --text: #2c3e50; --danger: #e74c3c; --success: #27ae60; --warning: #f1c40f; }
+        :root { --navy: #0a192f; --gold: #c5a059; --bg: #f0f2f5; --white: #fff; --text: #2c3e50; --danger: #e74c3c; --success: #27ae60; --warning: #f1c40f; --info: #3498db; }
         body { font-family: system-ui, -apple-system, sans-serif; margin: 0; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         
@@ -33,27 +33,81 @@
 
         .main { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; }
         
-        /* CARDS */
+        /* CARDS & DASHBOARD POWER BI STYLES */
         .card { background: var(--white); border-radius: 20px; padding: 20px; margin-bottom: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.01); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .card-title { font-size: 16px; font-weight: 800; color: var(--navy); margin: 0; }
         
-        /* DASHBOARD CHARTS */
-        .chart-compare { display: flex; height: 160px; align-items: flex-end; justify-content: center; gap: 40px; padding-top: 20px; }
-        .bar-group { display: flex; flex-direction: column; align-items: center; width: 60px; height: 100%; justify-content: flex-end; }
-        .bar-visual { width: 50px; border-radius: 8px 8px 0 0; transition: height 0.8s; min-height: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        /* KPI GRID */
+        .kpi-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .kpi-card { background: white; padding: 15px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-left: 4px solid var(--navy); position: relative; overflow: hidden; }
+        .kpi-label { font-size: 11px; text-transform: uppercase; color: #888; font-weight: 700; letter-spacing: 0.5px; }
+        .kpi-value { font-size: 20px; font-weight: 800; color: var(--text); margin-top: 5px; }
+
+        /* CHART 1: COMPARATIVA */
+        .chart-compare { display: flex; height: 180px; align-items: flex-end; justify-content: center; gap: 40px; padding-top: 30px; position: relative; }
+        .bar-group { display: flex; flex-direction: column; align-items: center; width: 60px; height: 100%; justify-content: flex-end; position: relative; z-index: 2; }
+        .bar-visual { width: 50px; border-radius: 8px 8px 0 0; transition: height 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); min-height: 4px; position: relative; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .bar-label { font-size: 12px; color: #555; margin-top: 10px; font-weight: 600; }
-        .bar-value { font-size: 14px; font-weight: 800; color: var(--navy); margin-bottom: 5px; }
+        .bar-floating-val { position: absolute; top: -25px; font-size: 12px; font-weight: 800; color: var(--navy); background: white; padding: 2px 6px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .chart-line-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; z-index: 1; pointer-events: none; opacity: 0.3; }
+        .chart-line { width: 100%; height: 1px; border-top: 1px dashed #ddd; }
 
-        .donut-container { display:flex; align-items:center; gap:20px; justify-content:center; margin-top:10px; }
-        .donut { width:120px; height:120px; border-radius:50%; flex-shrink:0; border:10px solid #f4f7f6; }
+        /* CHART 2: DONUT */
+        .donut-wrapper { display: flex; align-items: center; gap: 20px; }
+        .donut-chart { width: 120px; height: 120px; border-radius: 50%; position: relative; flex-shrink: 0; }
+        .donut-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 70%; height: 70%; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--navy); box-shadow: inset 0 0 10px rgba(0,0,0,0.05); }
+        .legend-list { flex: 1; font-size: 12px; }
+        .legend-item { display: flex; align-items: center; margin-bottom: 6px; justify-content: space-between; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 3px; margin-right: 8px; }
 
-        /* ACCOUNTS CARD STYLE (NEW) */
+        /* CHART 3: HISTORIA (TREND) */
+        .trend-chart { display: flex; height: 100px; align-items: flex-end; justify-content: space-between; gap: 4px; padding-top: 20px; }
+        .trend-bar { flex: 1; border-radius: 4px; transition: 0.5s; position: relative; min-height: 2px; }
+        .trend-label { font-size: 10px; text-align: center; color: #999; margin-top: 4px; }
+        .trend-val { font-size: 9px; position: absolute; top: -15px; width: 100%; text-align: center; color: #555; font-weight: bold; }
+
+        /* CHART 4: TOP EXPENSES (HORIZONTAL) */
+        .hor-bar-item { margin-bottom: 12px; }
+        .hor-bar-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; font-weight: 600; color: #444; }
+        .hor-bar-bg { background: #f0f0f0; height: 10px; border-radius: 5px; overflow: hidden; }
+        .hor-bar-fill { height: 100%; background: var(--navy); border-radius: 5px; width: 0; transition: width 1s; }
+
+        /* HEALTH GAUGE */
+        .health-card { background: linear-gradient(135deg, var(--navy) 0%, #1a3a5e 100%); color: white; text-align: center; }
+        .health-score { font-size: 36px; font-weight: 900; color: var(--gold); margin: 10px 0; }
+        
+        /* ACCOUNTS */
+        .acc-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 5px; scroll-behavior: smooth; }
+        .acc-mini-card { min-width: 150px; background: white; padding: 15px; border-radius: 16px; flex-shrink: 0; border: 1px solid #eee; position: relative; }
+        .acc-name { font-size: 12px; color: #888; text-transform: uppercase; font-weight: 700; }
+        .acc-bal { font-size: 18px; font-weight: 800; color: var(--navy); margin-top: 5px; }
+
+        /* CUENTAS LISTA (Con Botones) */
         .acc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .acc-actions { display: flex; gap: 15px; margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; justify-content: flex-end; }
         .acc-action-btn { font-size: 12px; color: #666; cursor: pointer; display: flex; align-items: center; gap: 5px; background: #f9f9f9; padding: 5px 10px; border-radius: 8px; }
 
-        /* SCROLL HORIZONTAL CUENTAS (DASHBOARD) */
-        .acc-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 5px; scroll-behavior: smooth; }
-        .acc-mini-card { min-width: 150px; background: white; padding: 15px; border-radius: 16px; flex-shrink: 0; border: 1px solid #eee; }
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-box { background: #fff; width: 92%; max-width: 420px; padding: 25px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .form-control { width: 100%; padding: 14px; border: 1px solid #e0e0e0; border-radius: 12px; font-size: 16px; background: #fafafa; transition: 0.2s; margin-bottom: 15px; }
+        .form-control:focus { border-color: var(--navy); background: #fff; box-shadow: 0 0 0 3px rgba(10, 25, 47, 0.1); }
+        .btn { padding: 16px; border-radius: 14px; border: none; font-weight: 800; width: 100%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
+        .btn-primary { background: var(--navy); color: white; box-shadow: 0 4px 15px rgba(10, 25, 47, 0.3); }
+
+        /* LISTS */
+        .tx-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f5f5f5; }
+        .icon-btn { cursor:pointer; font-size:18px; padding:8px; border-radius:8px; transition: background 0.2s; }
+        .icon-del { color: var(--danger); }
+        .tag-badge { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #666; margin-left: 5px; }
+        
+        /* CALENDAR */
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; }
+        .cal-day { height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 12px; background: #f8f9fa; color: #666; font-weight: 600; }
+        .cal-day.has-event { background: #e3f2fd; color: var(--navy); border: 1px solid #bbdefb; }
+        .cal-day.paid { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
         
         /* PRESUPUESTOS */
         .budget-row { margin-bottom: 15px; }
@@ -62,26 +116,6 @@
         .prog-bar { height: 100%; background: var(--success); transition: 0.5s; }
         .prog-bar.warn { background: var(--warning); }
         .prog-bar.danger { background: var(--danger); }
-
-        /* MODAL */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-box { background: #fff; width: 92%; max-width: 420px; padding: 25px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto; }
-        .form-control { width: 100%; padding: 14px; border: 1px solid #e0e0e0; border-radius: 12px; font-size: 16px; background: #fafafa; transition: 0.2s; margin-bottom: 15px; }
-        .btn { padding: 16px; border-radius: 14px; border: none; font-weight: 800; width: 100%; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-primary { background: var(--navy); color: white; box-shadow: 0 4px 15px rgba(10, 25, 47, 0.3); }
-
-        /* LISTS */
-        .tx-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid #f5f5f5; }
-        .icon-btn { cursor:pointer; font-size:18px; padding:8px; border-radius:8px; transition: background 0.2s; }
-        .icon-del { color: var(--danger); }
-        .tag-badge { background: #eee; padding: 2px 6px; border-radius: 4px; font-size: 10px; color: #666; margin-left: 5px; }
-
-        /* CALENDAR */
-        .cal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 15px; }
-        .cal-day { height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 10px; font-size: 12px; background: #f8f9fa; color: #666; font-weight: 600; }
-        .cal-day.has-event { background: #e3f2fd; color: var(--navy); border: 1px solid #bbdefb; }
-        .cal-day.paid { background: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
     </style>
 </head>
 <body>
@@ -90,7 +124,7 @@
     
     <nav class="sidebar" id="sidebar">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px">
-            <div class="app-title" style="color:var(--gold); font-size:22px">SavIA</div>
+            <div class="app-title" style="color:var(--gold); font-size:22px">SavIA <span style="font-size:12px; color:white; opacity:0.5; font-weight:400">PowerBI</span></div>
             <div onclick="UI.toggleMenu()" style="color:white; font-size:24px; cursor:pointer; padding:5px">✕</div>
         </div>
         <div class="nav-item active" onclick="UI.nav('dashboard')">📊 Dashboard</div>
@@ -164,7 +198,7 @@
     </div>
 
 <script>
-    /** SAVIA ENGINE V8.5 - GESTIÓN TOTAL **/
+    /** SAVIA ENGINE V9.0 - TOTAL INTEGRATION **/
     const UTILS = {
         fmt: (n) => "$" + parseInt(n).toLocaleString('es-CL'),
         id: () => Date.now().toString(36) + Math.random().toString(36).substr(2),
@@ -217,6 +251,21 @@
             return bal;
         },
 
+        getHistory: () => {
+            const res = [];
+            for(let i=5; i>=0; i--) {
+                const d = new Date();
+                d.setMonth(d.getMonth() - i);
+                const mStr = d.toISOString().slice(0,7);
+                const mName = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"][d.getMonth()];
+                const mTx = DB.data.tx.filter(t => t.date.startsWith(mStr));
+                const inc = mTx.filter(t => t.type === 'Ingreso').reduce((s,t) => s+t.amt, 0);
+                const exp = mTx.filter(t => t.type === 'Gasto').reduce((s,t) => s+t.amt, 0);
+                res.push({ month: mName, inc, exp });
+            }
+            return res;
+        },
+
         getBudgetStatus: (cat) => {
             const limit = DB.data.budgets[cat] || 0;
             if(limit === 0) return null;
@@ -226,6 +275,7 @@
         },
 
         addCat: function() {
+            // FIX: Soporta categorias de Ingreso tambien
             const n = prompt("Nombre de Nueva Categoría (" + APP.currTxType + "):");
             if(n && APP.currTxType !== 'Transferencia') {
                 if(!DB.data.cats.Personal[APP.currTxType].includes(n)) {
@@ -237,8 +287,7 @@
         },
 
         delCat: function(catName) {
-            if(confirm(`¿Borrar categoría "${catName}"?`)) {
-                // Borrar de todas las listas por si acaso
+            if(confirm(`¿Borrar "${catName}"?`)) {
                 DB.data.cats.Personal.Gasto = DB.data.cats.Personal.Gasto.filter(c => c !== catName);
                 if(DB.data.budgets[catName]) delete DB.data.budgets[catName];
                 DB.save();
@@ -280,22 +329,21 @@
             UI.refreshCurrent();
         },
         
-        delTx: (id) => { if(confirm("¿Eliminar movimiento?")) { DB.data.tx = DB.data.tx.filter(t=>t.id!==id); DB.save(); UI.refreshCurrent(); } },
+        delTx: (id) => { if(confirm("¿Eliminar?")) { DB.data.tx = DB.data.tx.filter(t=>t.id!==id); DB.save(); UI.refreshCurrent(); } },
         
-        // --- GESTION DE CUENTAS MEJORADA ---
+        // --- GESTION DE CUENTAS (MEJORADA) ---
         addAccount: function() {
             const n = prompt("Nombre Cuenta:");
-            const t = prompt("Tipo (Banco, Efectivo, Tarjeta):");
+            const t = prompt("Tipo:");
             const b = prompt("Saldo Inicial:", "0");
             if(n) { DB.data.acc.push({id: UTILS.id(), name: n, type: t || 'Banco', bal: parseFloat(b)}); DB.save(); UI.nav('accounts'); }
         },
-
+        
         editAccount: function(id) {
             const acc = DB.data.acc.find(a => a.id === id);
             const newName = prompt("Editar Nombre:", acc.name);
             const newType = prompt("Editar Tipo:", acc.type);
             const newBal = prompt("Corregir Saldo Inicial:", acc.bal);
-            
             if(newName) {
                 acc.name = newName;
                 if(newType) acc.type = newType;
@@ -306,7 +354,7 @@
         },
 
         delAccount: function(id) {
-            if(confirm("¿Borrar esta cuenta?\n(Los movimientos quedarán huerfanos pero no se borrarán)")) {
+            if(confirm("¿Borrar esta cuenta?")) {
                 DB.data.acc = DB.data.acc.filter(a => a.id !== id);
                 DB.save();
                 UI.refreshCurrent();
@@ -350,7 +398,7 @@
 
         refreshCurrent: () => UI.nav(UI.currView),
 
-        // --- DASHBOARD ---
+        // --- DASHBOARD POWER BI ---
         renderDashboard: (el) => {
             const month = UTILS.date().slice(0,7);
             const monthTx = DB.data.tx.filter(t => t.date.startsWith(month));
@@ -362,10 +410,12 @@
                 if(t.type === 'Gasto') { exp += t.amt; catSum[t.cat] = (catSum[t.cat] || 0) + t.amt; }
             });
 
+            // Comparativa
             const maxVal = Math.max(inc, exp, 1); 
             const hInc = (inc / maxVal * 100) + '%'; 
             const hExp = (exp / maxVal * 100) + '%';
 
+            // Donut
             const sortedCats = Object.keys(catSum).sort((a,b) => catSum[b] - catSum[a]);
             const colors = ['#0a192f', '#c5a059', '#27ae60', '#c0392b', '#8e44ad'];
             let deg = 0, gradient = [], legend = '';
@@ -376,12 +426,32 @@
                     const end = deg + (pct*360);
                     const col = colors[i%colors.length];
                     gradient.push(`${col} ${deg}deg ${end}deg`); deg = end;
-                    legend += `<div style="display:flex;align-items:center;font-size:11px;margin-bottom:4px"><div style="width:8px;height:8px;background:${col};margin-right:8px;border-radius:2px"></div><div style="flex:1">${c}</div><div>${Math.round(pct*100)}%</div></div>`;
+                    legend += `<div class="legend-item"><div style="display:flex;align-items:center"><div class="legend-dot" style="background:${col}"></div><span>${c}</span></div><b>${Math.round(pct*100)}%</b></div>`;
                 });
             } else {
                 gradient = ['#eee 0deg 360deg'];
                 legend = '<small style="color:#999">Sin datos</small>';
             }
+
+            // Historial (Trend)
+            const history = APP.getHistory();
+            const maxHist = Math.max(...history.map(h=>Math.max(h.inc, h.exp)), 1);
+            let trendHtml = '';
+            history.forEach(h => {
+                const hH = (h.exp / maxHist * 80) + '%';
+                trendHtml += `<div class="trend-bar" style="background:${h.exp>h.inc ? 'var(--danger)':'var(--navy)'}; height:${hH}"><div class="trend-val">$</div><div class="trend-label">${h.month}</div></div>`;
+            });
+
+            // Top Gastos (Horizontal)
+            let topHtml = '';
+            sortedCats.slice(0,3).forEach(c => {
+                 const w = (catSum[c] / exp * 100) + '%';
+                 topHtml += `<div class="hor-bar-item"><div class="hor-bar-header"><span>${c}</span><span>${UTILS.fmt(catSum[c])}</span></div><div class="hor-bar-bg"><div class="hor-bar-fill" style="width:${w}"></div></div></div>`;
+            });
+
+            // Health Score
+            const saveRate = inc > 0 ? ((inc - exp) / inc * 100) : 0;
+            const healthColor = saveRate > 20 ? 'var(--success)' : (saveRate > 0 ? 'var(--warning)' : 'var(--danger)');
 
             // Cuentas Mini
             let accHtml = '';
@@ -392,47 +462,44 @@
             el.innerHTML = `
                 <div class="acc-scroll">${accHtml} <div class="acc-mini-card" onclick="APP.addAccount()" style="background:#eee; display:flex; align-items:center; justify-content:center; font-size:24px">+</div></div>
                 
+                <div class="card health-card">
+                    <div style="font-size:12px; opacity:0.8; text-transform:uppercase">Salud Financiera (Ahorro)</div>
+                    <div class="health-score" style="color:${healthColor}">${Math.round(saveRate)}%</div>
+                    <div style="font-size:11px">Meta sugerida: 20%</div>
+                </div>
+
+                <div class="kpi-row">
+                    <div class="kpi-card" style="border-color:var(--success)"><div class="kpi-label">Ingresos</div><div class="kpi-value">${UTILS.fmt(inc)}</div></div>
+                    <div class="kpi-card" style="border-color:var(--danger)"><div class="kpi-label">Gastos</div><div class="kpi-value">${UTILS.fmt(exp)}</div></div>
+                </div>
+
                 <div class="card">
                     <h3 class="card-title">Flujo de Caja</h3>
                     <div class="chart-compare">
-                        <div class="bar-group">
-                             <div class="bar-value">${UTILS.fmt(inc)}</div>
-                             <div class="bar-visual" style="background:var(--success); height:${hInc}"></div>
-                             <div class="bar-label">Ingresos</div>
-                        </div>
-                        <div class="bar-group">
-                             <div class="bar-value">${UTILS.fmt(exp)}</div>
-                             <div class="bar-visual" style="background:var(--danger); height:${hExp}"></div>
-                             <div class="bar-label">Gastos</div>
-                        </div>
+                        <div class="chart-line-bg"><div class="chart-line"></div><div class="chart-line"></div><div class="chart-line"></div></div>
+                        <div class="bar-group"><div class="bar-floating-val">${UTILS.fmt(inc)}</div><div class="bar-visual" style="background:var(--success); height:${hInc}"></div><div class="bar-label">Ingresos</div></div>
+                        <div class="bar-group"><div class="bar-floating-val">${UTILS.fmt(exp)}</div><div class="bar-visual" style="background:var(--danger); height:${hExp}"></div><div class="bar-label">Gastos</div></div>
                     </div>
                 </div>
 
                 <div class="card">
                     <h3 class="card-title">Distribución</h3>
-                    <div class="donut-container">
-                        <div class="donut" style="background:conic-gradient(${gradient.join(',')})"></div>
-                        <div style="flex:1">${legend}</div>
+                    <div class="donut-wrapper">
+                        <div class="donut-chart" style="background:conic-gradient(${gradient.join(',')})"><div class="donut-center">GASTOS</div></div>
+                        <div class="legend-list">${legend}</div>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h3 class="card-title">Alertas Presupuesto</h3>
-                    <div id="dash-budgets"></div>
+                    <h3 class="card-title">Top Fugas 💸</h3>
+                    <div style="margin-top:15px">${topHtml || '<small>Sin gastos</small>'}</div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">Tendencia (6 Meses)</h3>
+                    <div class="trend-chart">${trendHtml}</div>
                 </div>
             `;
-            
-            const budEl = document.getElementById('dash-budgets');
-            let hasBud = false;
-            Object.keys(DB.data.budgets).forEach(cat => {
-                const st = APP.getBudgetStatus(cat);
-                if(st && st.limit > 0) {
-                    hasBud = true;
-                    let color = ''; if(st.pct > 100) color = 'danger'; else if(st.pct > 80) color = 'warn';
-                    budEl.innerHTML += `<div class="budget-row"><div class="budget-info"><b>${cat}</b><span>${UTILS.fmt(st.spent)} / ${UTILS.fmt(st.limit)}</span></div><div class="prog-container"><div class="prog-bar ${color}" style="width:${Math.min(st.pct, 100)}%"></div></div>${st.remain < 0 ? `<small style="color:red">Excedido: ${UTILS.fmt(Math.abs(st.remain))}</small>` : ''}</div>`;
-                }
-            });
-            if(!hasBud) budEl.innerHTML = '<small style="color:#999">Sin presupuestos activos</small>';
         },
 
         renderTransactions: (el) => {
